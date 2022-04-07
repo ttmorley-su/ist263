@@ -3,7 +3,6 @@ body {
     margin: 0;
 }
 
-table,
 th,
 td {
     border: 1px solid #000;
@@ -15,6 +14,7 @@ table {
     max-width: 100%;
     display: block;
     box-sizing: border-box;
+    border-collapse: collapse;
 }
 
 th {
