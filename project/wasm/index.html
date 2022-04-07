@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Web Memory</title>
+	
+		<!-- <link rel="stylesheet" href="https://ttmorley-su.github.io/ist263/project/main.css"> -->
+	
+	
+	
+</head>
+<body>
+	<div class="content">
+		<nav>
+			<!-- <button class="back"></button> -->
+			<a class="title" href=https://ttmorley-su.github.io/ist263/project/>Web Memory</a>
+		</nav>
+		
+	<aside>
+		<h3>Table of Contents</h3>
+		
+		    <ul>
+			    
+			        <li>
+			            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#webassembly">WebAssembly</a>
+			            
+			                <ul>
+			                    
+			                        <li>
+			                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#making-a-basic-webassembly-module">Making a Basic WebAssembly Module</a>
+			                        </li>
+			                    
+			                        <li>
+			                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#introducing-dynamic-memory">Introducing Dynamic Memory</a>
+			                        </li>
+			                    
+			                </ul>
+			            
+			        </li>
+			    
+		    </ul>
+		
+	</aside>
+	<main>
+		<h1 id="webassembly">WebAssembly</h1>
+<p>WebAssembly is a lightweight bytecode format for the web. Bytecode isn’t something you typically write by hand, it’s something you compile to. A lot of modern compilers have support for WebAssembly out of the box. Some popular languages that you can use to make WebAssembly are: C, C++, Rust, Go, Swift, TypeScript (a specialized version called AssemblyScript), etc. WebAssembly is great for writing performance-critical or computationally heavy code. You can also write an application in an entirely different language and reuse that code for a native app and a web app. WebAssembly code is always going to be in a module. These modules allow you to import and export code. So, you can import some functions from JavaScript, do some computation-heavy work in WebAssembly, then send the data back to JavaScript.</p>
+<h2 id="making-a-basic-webassembly-module">Making a Basic WebAssembly Module</h2>
+<p>Lets quickly write a basic WebAssembly module in C to show you the ropes. This assumes you have clang installed. First, create main.c and put the following contents in it:</p>
+<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">int add(int a, int b) {
+	return a + b;
+}
+</code></pre>
+<p>Now we can make a WebAssembly file! Run: </p>
+<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">clang main.c -o main.wasm -target wasm32-unknown-unknown -nostdlib -Wl,-no-entry -Wl,--export-all -O3
+</code></pre>
+<p>Basically, we’re telling clang that we’re making a C program that will not use C’s standard library and it should target WebAssembly. If all goes well, you should see a file called main.wasm! </p>
+<h3 id="loading-the-module">Loading the Module</h3>
+<p>Now if we create a basic HTML file with the following contents and open it (must be served from a web server! You can’t just open the HTML file in your browser!), we should see 4 in an alert box! </p>
+<script>
+  async function loadWasm(request, imports) {
+    let wasm;
+    if ("instantiateStreaming" in WebAssembly) {
+      wasm = await WebAssembly.instantiateStreaming(request, imports);
+    } else {
+      const response = await request;
+      const bytes = await response.arrayBuffer();
+      wasm = await WebAssembly.instantiate(bytes, imports);
+    }
+    alert(wasm.instance.exports.add(2, 2));
+  }
+  loadWasm(fetch("./main.wasm"), {});
+</script>
+<h2 id="introducing-dynamic-memory">Introducing Dynamic Memory</h2>
+<p>So, now that we’re up and running with a basic WebAssembly module, let’s try playing with memory! Let’s create a new function:</p>
+<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">int sum(int *array, int array_length) {
+  int sum = 0;
+  for (int i = 0; i &lt; array_length; i++) {
+    sum += array[i];
+  }
+  return sum;
+}
+</code></pre>
+<h3 id="writing-a-basic-allocator">Writing a Basic Allocator</h3>
+<p>Now, you’d think that you could just do <code>wasm.instance.exports.sum([1, 2, 3], 3);</code> but, you can’t. We need to pass in a pointer to our array. So… how do we do that? It’s not like we can use <code>malloc</code> to allocate our array… or can we? Since we don’t have access to the C standard library, we can’t just use its <code>malloc</code> and <code>free</code> implementations… we have to write our own. Now, we won’t write a full featured one, but we can still write a fairly basic one. This specific kind of allocator is called a bump pointer. All it does is bump a pointer. Since this kind of allocator is so basic, we can’t really free any of our allocations. Add this to your main.c and recompile main.wasm, using the same command as before:</p>
+<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">&#x2F;&#x2F; get the start of our usable memory
+extern unsigned char __heap_base;
+
+&#x2F;&#x2F; create our bump pointer, starting at null (0)
+unsigned char *bump_pointer = 0;
+
+void *malloc(unsigned long size) {
+  if (bump_pointer == 0) bump_pointer = &amp;__heap_base;
+  unsigned char *pointer = bump_pointer;
+  bump_pointer += size;    &#x2F;&#x2F; bump the bump pointer
+  return (void *)pointer;  &#x2F;&#x2F; return our pointer
+}
+
+void free(void *pointer) {}
+</code></pre>
+<h3 id="getting-the-sum">Getting the Sum</h3>
+<p>Now that we have a (very) basic allocator, we can finally get the sum function working. The new HTML file should look like this:</p>
+<pre data-lang="html" class="language-html "><code class="language-html" data-lang="html">&lt;script&gt;
+  async function loadWasm(request, imports) {
+    if (&quot;instantiateStreaming&quot; in WebAssembly) {
+      return WebAssembly.instantiateStreaming(request, imports);
+    } else {
+      const response = await request;
+      const bytes = await response.arrayBuffer();
+      return WebAssembly.instantiate(bytes, imports);
+    }
+  }
+
+  async function sum(array) {
+    const wasm = await loadWasm(fetch(&quot;.&#x2F;main.wasm&quot;), {});
+    let mod = wasm.instance;
+    let buf = new Int32Array(array);
+    let arrayByteLength = buf.byteLength;
+    let arrayPtr = mod.exports.malloc(arrayByteLength);
+    let memoryView = new Int32Array(
+      mod.exports.memory.buffer,
+      arrayPtr,
+      arrayByteLength
+    );
+    memoryView.set(buf);
+    let response = mod.exports.sum(arrayPtr, array.length);
+    mod.exports.free(arrayPtr); &#x2F;&#x2F; just to make our code future proof
+    return response;
+  }
+
+  sum([1, 2, 3]).then(alert);
+&lt;&#x2F;script&gt;
+</code></pre>
+<p>If all goes well, you should see an alert box with 6 in it. Looking into WebAssembly memory any more would invovle writing a more comprehensive allocator, which is quite a undertaking.</p>
+
+		<div class="paging">
+			
+				<a href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;memory&#x2F;>Previous</a>
+			
+			
+				<a href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;js&#x2F;>Next</a>
+			
+		</div>
+	</main>
+
+		<footer>
+			&copy; 2022
+		</footer>
+	</div>
+</body>
+</html>
