@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Web Memory</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 	
-		<!-- <link rel="stylesheet" href="https://ttmorley-su.github.io/ist263/project/main.css"> -->
+		<link rel="stylesheet" href="https://ttmorley-su.github.io/ist263/project/main.css">
 	
 	
 	
@@ -13,31 +16,56 @@
 <body>
 	<div class="content">
 		<nav>
-			<!-- <button class="back"></button> -->
 			<a class="title" href=https://ttmorley-su.github.io/ist263/project/>Web Memory</a>
 		</nav>
 		
+<div class="sidebar-row">
 	<aside>
 		<h3>Table of Contents</h3>
+		<div class="paging">
+			
+				<a class="previous" href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;memory&#x2F;><- Previous</a>
+			
+			
+				<a class="next" href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;js&#x2F;>Next -></a>
+			
+		</div>
 		
 		    <ul>
 			    
-			        <li>
-			            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#webassembly">WebAssembly</a>
-			            
-			                <ul>
-			                    
-			                        <li>
-			                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#making-a-basic-webassembly-module">Making a Basic WebAssembly Module</a>
-			                        </li>
-			                    
-			                        <li>
-			                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#introducing-dynamic-memory">Introducing Dynamic Memory</a>
-			                        </li>
-			                    
-			                </ul>
-			            
-			        </li>
+		            
+	                    
+	                        <li>
+	                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#making-a-basic-webassembly-module">Making a Basic WebAssembly Module</a>
+	                        </li>
+				            
+					            <ul>
+				                    
+				                        <li>
+				                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#loading-the-module">Loading the Module</a>
+				                        </li>
+				                    
+					            </ul>
+				            
+	                    
+	                        <li>
+	                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#introducing-dynamic-memory">Introducing Dynamic Memory</a>
+	                        </li>
+				            
+					            <ul>
+				                    
+				                        <li>
+				                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#writing-a-basic-allocator">Writing a Basic Allocator</a>
+				                        </li>
+				                    
+				                        <li>
+				                            <a href="https://ttmorley-su.github.io/ist263/project/wasm/#getting-the-sum">Getting the Sum</a>
+				                        </li>
+				                    
+					            </ul>
+				            
+	                    
+		            
 			    
 		    </ul>
 		
@@ -47,101 +75,95 @@
 <p>WebAssembly is a lightweight bytecode format for the web. Bytecode isn’t something you typically write by hand, it’s something you compile to. A lot of modern compilers have support for WebAssembly out of the box. Some popular languages that you can use to make WebAssembly are: C, C++, Rust, Go, Swift, TypeScript (a specialized version called AssemblyScript), etc. WebAssembly is great for writing performance-critical or computationally heavy code. You can also write an application in an entirely different language and reuse that code for a native app and a web app. WebAssembly code is always going to be in a module. These modules allow you to import and export code. So, you can import some functions from JavaScript, do some computation-heavy work in WebAssembly, then send the data back to JavaScript.</p>
 <h2 id="making-a-basic-webassembly-module">Making a Basic WebAssembly Module</h2>
 <p>Lets quickly write a basic WebAssembly module in C to show you the ropes. This assumes you have clang installed. First, create main.c and put the following contents in it:</p>
-<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">int add(int a, int b) {
-	return a + b;
-}
-</code></pre>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">add</span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">b</span><span>) {
+</span><span>  </span><span style="color:#b48ead;">return</span><span> a + b;
+</span><span>}
+</span></code></pre>
 <p>Now we can make a WebAssembly file! Run: </p>
-<pre data-lang="sh" class="language-sh "><code class="language-sh" data-lang="sh">clang main.c -o main.wasm -target wasm32-unknown-unknown -nostdlib -Wl,-no-entry -Wl,--export-all -O3
-</code></pre>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#bf616a;">clang</span><span> main.c</span><span style="color:#bf616a;"> -o</span><span> main.wasm</span><span style="color:#bf616a;"> -target</span><span> wasm32-unknown-unknown</span><span style="color:#bf616a;"> -nostdlib -Wl</span><span>,-no-entry</span><span style="color:#bf616a;"> -Wl</span><span>,--export-all</span><span style="color:#bf616a;"> -O3
+</span></code></pre>
 <p>Basically, we’re telling clang that we’re making a C program that will not use C’s standard library and it should target WebAssembly. If all goes well, you should see a file called main.wasm! </p>
 <h3 id="loading-the-module">Loading the Module</h3>
 <p>Now if we create a basic HTML file with the following contents and open it (must be served from a web server! You can’t just open the HTML file in your browser!), we should see 4 in an alert box! </p>
-<script>
-  async function loadWasm(request, imports) {
-    let wasm;
-    if ("instantiateStreaming" in WebAssembly) {
-      wasm = await WebAssembly.instantiateStreaming(request, imports);
-    } else {
-      const response = await request;
-      const bytes = await response.arrayBuffer();
-      wasm = await WebAssembly.instantiate(bytes, imports);
-    }
-    alert(wasm.instance.exports.add(2, 2));
-  }
-  loadWasm(fetch("./main.wasm"), {});
-</script>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>  </span><span style="color:#b48ead;">async function </span><span style="color:#8fa1b3;">loadWasm</span><span>(request, imports) {
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">wasm</span><span>;
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(&quot;</span><span style="color:#a3be8c;">instantiateStreaming</span><span>&quot; in </span><span style="color:#bf616a;">WebAssembly</span><span>) {
+</span><span>      </span><span style="color:#bf616a;">wasm </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#ebcb8b;">WebAssembly</span><span>.</span><span style="color:#bf616a;">instantiateStreaming</span><span>(</span><span style="color:#bf616a;">request</span><span>, </span><span style="color:#bf616a;">imports</span><span>);
+</span><span>    } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">response </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">request</span><span>;
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">bytes </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">response</span><span>.</span><span style="color:#bf616a;">arrayBuffer</span><span>();
+</span><span>      </span><span style="color:#bf616a;">wasm </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#ebcb8b;">WebAssembly</span><span>.</span><span style="color:#bf616a;">instantiate</span><span>(</span><span style="color:#bf616a;">bytes</span><span>, </span><span style="color:#bf616a;">imports</span><span>);
+</span><span>    }
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(</span><span style="color:#bf616a;">wasm</span><span>.instance.exports.</span><span style="color:#bf616a;">add</span><span>(</span><span style="color:#d08770;">2</span><span>, </span><span style="color:#d08770;">2</span><span>));
+</span><span>  }
+</span><span>  </span><span style="color:#bf616a;">loadWasm</span><span>(</span><span style="color:#bf616a;">fetch</span><span>(&quot;</span><span style="color:#a3be8c;">./main.wasm</span><span>&quot;), {});
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
 <h2 id="introducing-dynamic-memory">Introducing Dynamic Memory</h2>
 <p>So, now that we’re up and running with a basic WebAssembly module, let’s try playing with memory! Let’s create a new function:</p>
-<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">int sum(int *array, int array_length) {
-  int sum = 0;
-  for (int i = 0; i &lt; array_length; i++) {
-    sum += array[i];
-  }
-  return sum;
-}
-</code></pre>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">sum</span><span>(</span><span style="color:#b48ead;">int </span><span>*</span><span style="color:#bf616a;">array</span><span>, </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">array_length</span><span>) {
+</span><span>  </span><span style="color:#b48ead;">int</span><span> sum = </span><span style="color:#d08770;">0</span><span>;
+</span><span>  </span><span style="color:#b48ead;">for </span><span>(</span><span style="color:#b48ead;">int</span><span> i = </span><span style="color:#d08770;">0</span><span>; i &lt; array_length; i++) {
+</span><span>    sum += array[i];
+</span><span>  }
+</span><span>  </span><span style="color:#b48ead;">return</span><span> sum;
+</span><span>}
+</span></code></pre>
 <h3 id="writing-a-basic-allocator">Writing a Basic Allocator</h3>
 <p>Now, you’d think that you could just do <code>wasm.instance.exports.sum([1, 2, 3], 3);</code> but, you can’t. We need to pass in a pointer to our array. So… how do we do that? It’s not like we can use <code>malloc</code> to allocate our array… or can we? Since we don’t have access to the C standard library, we can’t just use its <code>malloc</code> and <code>free</code> implementations… we have to write our own. Now, we won’t write a full featured one, but we can still write a fairly basic one. This specific kind of allocator is called a bump pointer. All it does is bump a pointer. Since this kind of allocator is so basic, we can’t really free any of our allocations. Add this to your main.c and recompile main.wasm, using the same command as before:</p>
-<pre data-lang="c" class="language-c "><code class="language-c" data-lang="c">&#x2F;&#x2F; get the start of our usable memory
-extern unsigned char __heap_base;
-
-&#x2F;&#x2F; create our bump pointer, starting at null (0)
-unsigned char *bump_pointer = 0;
-
-void *malloc(unsigned long size) {
-  if (bump_pointer == 0) bump_pointer = &amp;__heap_base;
-  unsigned char *pointer = bump_pointer;
-  bump_pointer += size;    &#x2F;&#x2F; bump the bump pointer
-  return (void *)pointer;  &#x2F;&#x2F; return our pointer
-}
-
-void free(void *pointer) {}
-</code></pre>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#65737e;">// get the start of our usable memory
+</span><span style="color:#b48ead;">extern unsigned char</span><span> __heap_base;
+</span><span>
+</span><span style="color:#65737e;">// create our bump pointer, starting at null (0)
+</span><span style="color:#b48ead;">unsigned char </span><span>*bump_pointer = </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span style="color:#b48ead;">void </span><span>*</span><span style="color:#8fa1b3;">malloc</span><span>(</span><span style="color:#b48ead;">unsigned long </span><span style="color:#bf616a;">size</span><span>) {
+</span><span>  </span><span style="color:#b48ead;">if </span><span>(bump_pointer == </span><span style="color:#d08770;">0</span><span>) bump_pointer = &amp;__heap_base;
+</span><span>  </span><span style="color:#b48ead;">unsigned char </span><span>*pointer = bump_pointer;
+</span><span>  bump_pointer += size;    </span><span style="color:#65737e;">// bump the bump pointer
+</span><span>  </span><span style="color:#b48ead;">return </span><span>(</span><span style="color:#b48ead;">void </span><span>*)pointer;  </span><span style="color:#65737e;">// return our pointer
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">free</span><span>(</span><span style="color:#b48ead;">void </span><span>*</span><span style="color:#bf616a;">pointer</span><span>) {}
+</span></code></pre>
 <h3 id="getting-the-sum">Getting the Sum</h3>
 <p>Now that we have a (very) basic allocator, we can finally get the sum function working. The new HTML file should look like this:</p>
-<pre data-lang="html" class="language-html "><code class="language-html" data-lang="html">&lt;script&gt;
-  async function loadWasm(request, imports) {
-    if (&quot;instantiateStreaming&quot; in WebAssembly) {
-      return WebAssembly.instantiateStreaming(request, imports);
-    } else {
-      const response = await request;
-      const bytes = await response.arrayBuffer();
-      return WebAssembly.instantiate(bytes, imports);
-    }
-  }
-
-  async function sum(array) {
-    const wasm = await loadWasm(fetch(&quot;.&#x2F;main.wasm&quot;), {});
-    let mod = wasm.instance;
-    let buf = new Int32Array(array);
-    let arrayByteLength = buf.byteLength;
-    let arrayPtr = mod.exports.malloc(arrayByteLength);
-    let memoryView = new Int32Array(
-      mod.exports.memory.buffer,
-      arrayPtr,
-      arrayByteLength
-    );
-    memoryView.set(buf);
-    let response = mod.exports.sum(arrayPtr, array.length);
-    mod.exports.free(arrayPtr); &#x2F;&#x2F; just to make our code future proof
-    return response;
-  }
-
-  sum([1, 2, 3]).then(alert);
-&lt;&#x2F;script&gt;
-</code></pre>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>  </span><span style="color:#b48ead;">async function </span><span style="color:#8fa1b3;">loadWasm</span><span>(request, imports) {
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(&quot;</span><span style="color:#a3be8c;">instantiateStreaming</span><span>&quot; in </span><span style="color:#bf616a;">WebAssembly</span><span>) {
+</span><span>      </span><span style="color:#b48ead;">return </span><span style="color:#ebcb8b;">WebAssembly</span><span>.</span><span style="color:#bf616a;">instantiateStreaming</span><span>(</span><span style="color:#bf616a;">request</span><span>, </span><span style="color:#bf616a;">imports</span><span>);
+</span><span>    } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">response </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">request</span><span>;
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">bytes </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">response</span><span>.</span><span style="color:#bf616a;">arrayBuffer</span><span>();
+</span><span>      </span><span style="color:#b48ead;">return </span><span style="color:#ebcb8b;">WebAssembly</span><span>.</span><span style="color:#bf616a;">instantiate</span><span>(</span><span style="color:#bf616a;">bytes</span><span>, </span><span style="color:#bf616a;">imports</span><span>);
+</span><span>    }
+</span><span>  }
+</span><span>
+</span><span>  </span><span style="color:#b48ead;">async function </span><span style="color:#8fa1b3;">sum</span><span>(array) {
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">wasm </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">loadWasm</span><span>(</span><span style="color:#bf616a;">fetch</span><span>(&quot;</span><span style="color:#a3be8c;">./main.wasm</span><span>&quot;), {});
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">mod </span><span>= </span><span style="color:#bf616a;">wasm</span><span>.instance;
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">buf </span><span>= new </span><span style="color:#ebcb8b;">Int32Array</span><span>(</span><span style="color:#bf616a;">array</span><span>);
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">arrayByteLength </span><span>= </span><span style="color:#bf616a;">buf</span><span>.byteLength;
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">arrayPtr </span><span>= </span><span style="color:#bf616a;">mod</span><span>.exports.</span><span style="color:#bf616a;">malloc</span><span>(</span><span style="color:#bf616a;">arrayByteLength</span><span>);
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">memoryView </span><span>= new </span><span style="color:#ebcb8b;">Int32Array</span><span>(
+</span><span>      </span><span style="color:#bf616a;">mod</span><span>.exports.memory.buffer,
+</span><span>      </span><span style="color:#bf616a;">arrayPtr</span><span>,
+</span><span>      </span><span style="color:#bf616a;">arrayByteLength
+</span><span>    );
+</span><span>    </span><span style="color:#bf616a;">memoryView</span><span>.</span><span style="color:#bf616a;">set</span><span>(</span><span style="color:#bf616a;">buf</span><span>);
+</span><span>    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">response </span><span>= </span><span style="color:#bf616a;">mod</span><span>.exports.</span><span style="color:#bf616a;">sum</span><span>(</span><span style="color:#bf616a;">arrayPtr</span><span>, </span><span style="color:#bf616a;">array</span><span>.length);
+</span><span>    </span><span style="color:#bf616a;">mod</span><span>.exports.</span><span style="color:#bf616a;">free</span><span>(</span><span style="color:#bf616a;">arrayPtr</span><span>); </span><span style="color:#65737e;">// just to make our code future proof
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">response</span><span>;
+</span><span>  }
+</span><span>
+</span><span>  </span><span style="color:#bf616a;">sum</span><span>([</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">2</span><span>, </span><span style="color:#d08770;">3</span><span>]).</span><span style="color:#bf616a;">then</span><span>(</span><span style="color:#bf616a;">alert</span><span>);
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
 <p>If all goes well, you should see an alert box with 6 in it. Looking into WebAssembly memory any more would invovle writing a more comprehensive allocator, which is quite a undertaking.</p>
 
-		<div class="paging">
-			
-				<a href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;memory&#x2F;>Previous</a>
-			
-			
-				<a href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;js&#x2F;>Next</a>
-			
-		</div>
 	</main>
+</div>
 
 		<footer>
 			&copy; 2022
