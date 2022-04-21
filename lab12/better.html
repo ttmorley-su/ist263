@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Walnut Game 1</title>
+	<style type="text/css">
+		#walnuts {
+			display: flex;
+		}
+
+		#walnuts img:first-child {
+			order: 1;
+		}
+		
+		#walnuts img:nth-child(2) {
+			order: 2;
+		}
+		
+		#walnuts img:last-child {
+			order: 3;
+		}
+	</style>
+</head>
+<body>
+	<h1>Choose a Walnut</h1>
+	<p>Result: <span id="output"></span></p>
+	<div id="walnuts">
+		<img src="../images/walnut.png" alt="first walnut" onclick="message(winner_msg)">
+		<img src="../images/walnut.png" alt="second walnut" onclick="message(loser_msg)">
+		<img src="../images/walnut.png" alt="third walnut" onclick="message(loser_msg)">
+	</div>
+	<script>
+		const winner_msg = "You won!";
+		const loser_msg = "Wrong Shell - Try Again";
+		const output = document.getElementById("output");
+		const shells = document.getElementById("walnuts");
+
+		function message(message) {
+			output.innerHTML = message;
+		}
+
+		function randomizeOrder() {
+			let shell = shells.children[0];
+			shell.style.order = Math.floor((Math.random() * 3) + 2);
+		}
+
+		randomizeOrder();
+	</script>
+</body>
+</html>
