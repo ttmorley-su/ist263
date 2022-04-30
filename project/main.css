@@ -1,112 +1,188 @@
-* {
-    box-sizing: border-box;
+:root {
+    --bkg: hsl(0, 0%, 100%);
+    --bkg-nav: hsla(0, 0%, 100%, 0.8);
+    --bkg-btn: hsl(0, 0%, 0%);
+    --bkg-hero: hsla(0, 0%, 54%, 0.05);
+    --bkg-lesson: hsla(0, 0%, 47.5%, 0.1);
+    --border-footer: hsla(0, 0%, 47.5%, 0.075);
+    --border-hero: hsla(0, 0%, 47.5%, 0.1);
+    --border-nav: hsla(0, 0%, 47.5%, 0.1);
+    --txt: #000;
+    --txt-btn: #fff;
+    --txt-link: hsl(204, 91%, 40%);
+    --txt-pagination: hsl(204, 91%, 6%)
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bkg: hsl(0, 0%, 0%);
+        --bkg-nav: hsla(0, 0%, 0%, 0.8);
+        --bkg-btn: hsl(0, 0%, 100%);
+        --bkg-hero: hsla(0, 0%, 54%, 0.15);
+        --bkg-lesson: hsla(0, 0%, 47.5%, 0.2);
+        --border-footer: hsla(0, 0%, 52.5%, 0.25);
+        --border-hero: hsla(0, 0%, 47.5%, 0.1);
+        --border-nav: hsla(0, 0%, 52.5%, 0.25);
+        --txt: #fff;
+        --txt-btn: #000;
+        --txt-link: hsl(204, 91%, 50%);
+        --txt-pagination: hsl(204, 91%, 94%)
+    }
+}
+
+* {
+    box-sizing: border-box
+}
+
+html,
 body {
-    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: var(--bkg);
+    color: var(--txt)
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     margin: 0;
     line-height: 1.5rem;
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased
 }
+
 img {
-    max-width: 100%;
+    max-width: 100%
 }
+
 ol li {
     display: block;
-    height: 20px;
+    height: 20px
 }
+
 pre[data-lang] {
     padding: 1rem;
     border-radius: 0.5rem;
     overflow: scroll;
     max-width: 100%;
+    width: 100%;
+    display: block
 }
+
 pre[data-lang] code {
-    font-size: 0.8125rem;
+    font-size: 0.8125rem
 }
+
 code {
-    font-family: "JetBrains Mono", monospace;
+    font-family: 'JetBrains Mono', monospace
 }
+
 footer {
-    box-shadow: 0 -1px 0 0 rgba(121, 121, 121, 0.075);
+    box-shadow: 0 -1px 0 0 var(--border-footer);
     padding: 2rem 1rem;
-    text-align: center;
+    text-align: center
 }
+
 main.fill-height {
     flex: 1 1 auto;
-    height: 100%;
+    height: 100%
 }
+
 section.hero {
-    border-bottom: 1px solid rgba(121, 121, 121, 0.1);
-    background-color: rgba(137, 137, 137, 0.05);
+    border-bottom: 1px solid var(--border-hero);
+    background-color: var(--bkg-hero);
     padding: 8rem 1rem;
-    text-align: center;
+    text-align: center
 }
+
 section.hero h1 {
-    font-size: 3rem;
+    font-size: 3rem
 }
+
+@media (max-width: 50rem) {
+    section.hero {
+        padding: 4rem 1rem
+    }
+
+    section.hero h1 {
+        font-size: 1.5rem
+    }
+}
+
 section.hero p {
     max-width: 27rem;
     margin: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem
 }
+
 section.hero a {
-    background-color: #000;
-    color: #fff;
+    background-color: var(--bkg-btn);
+    color: var(--txt-btn);
     text-decoration: none;
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     display: block;
     width: 16rem;
     margin: auto;
-    transition: transform 300ms ease-in-out;
+    transition: transform 300ms ease-in-out
 }
+
 section.hero a:hover {
-    transform: scale(105%);
+    transform: scale(105%)
 }
+
 section.lessons {
     padding: 1.5rem 1rem;
     max-width: 48rem;
     margin: auto;
-    counter-reset: lessons-section;
+    counter-reset: lessons-section
 }
-section.lessons ol {
+
+section.lessons div.numbered-list {
     margin: 0;
-    padding: 0;
+    padding: 0
 }
+
 section.lessons a {
     height: 3rem;
     display: flex;
     align-items: center;
-    background-color: rgba(121, 121, 121, 0.1);
+    background-color: var(--bkg-lesson);
     margin-bottom: 0.5rem;
     padding: 0 1rem;
     border-radius: 0.5rem;
     text-decoration: none;
-    color: #000;
+    color: var(--txt);
+    transition: transform 300ms ease-in-out
 }
+
 section.lessons a::before {
-    font-family: "JetBrains Mono", monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 1.1rem;
     margin-right: 1rem;
     width: 2ch;
     text-align: center;
     counter-increment: lessons-section;
-    content: "0" counter(lessons-section);
-    opacity: 0.6;
+    content: "0"counter(lessons-section);
+    opacity: 0.6
 }
+
 section.lessons a span {
-    flex: 1 1 auto;
+    flex: 1 1 auto
 }
+
 section.lessons a::after {
     content: "->";
-    opacity: 0.5;
+    opacity: 0.5
 }
+
+section.lessons a:hover {
+    transform: scale(100.5%)
+}
+
 div.content {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100vh
 }
+
 nav {
     position: sticky;
     top: 0;
@@ -117,77 +193,93 @@ nav {
     grid-template-areas: ". title .";
     padding: 1rem 1rem;
     height: 3rem;
-    box-shadow: 0 1px 0 0 rgba(121, 121, 121, 0.15);
-    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 0 0 var(--border-nav);
+    background-color: var(--bkg-nav);
     -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px)
 }
+
 nav.has-back {
-    grid-template-areas: "back title .";
+    grid-template-areas: "back title ."
 }
+
 nav button.back {
     grid-area: back;
-    line-height: 1rem;
+    line-height: 1rem
 }
+
 nav .title {
     line-height: 1rem;
     grid-area: title;
     text-align: center;
     text-decoration: none;
-    color: #000;
-    font-weight: 600;
+    color: var(--txt);
+    font-weight: 600
 }
+
 div.sidebar-row {
     padding: 2rem 1rem;
     max-width: 78rem;
     margin: auto;
-    width: 100vw;
+    width: 100vw
 }
-@media only screen and (min-width: 48rem) {
+
+@media only screen and (min-width: 50rem) {
     div.sidebar-row {
-        display: flex;
-        flex-direction: row;
+        display: grid;
+        grid-template-columns: minmax(14rem, 17.5rem) 1fr;
+        gap: 2rem
     }
+
     div.sidebar-row aside {
         position: sticky;
         flex: 1 1 auto;
         top: 4rem;
-        max-width: 300px;
-        width: 100%;
-        height: fit-content;
-        margin-right: 2rem;
+        height: fit-content
     }
 }
+
 div.sidebar-row aside a {
     text-decoration: none;
+    color: var(--txt-link);
+    display: block
 }
-div.sidebar-row aside ul {
+
+div.sidebar-row aside .toc {
     padding: 0;
-    list-style: none;
+    list-style: none
 }
-div.sidebar-row aside ul ul {
-    padding-left: 1.5rem;
+
+div.sidebar-row aside .toc .toc {
+    padding-left: 1.5rem
 }
-div.sidebar-row main {
-    flex: 1 1 auto;
-    width: 100%;
-}
-div.sidebar-row main h1 {
-    line-height: 2.5rem;
-}
-.paging {
+
+div.sidebar-row aside .paging {
     display: flex;
     justify-content: center;
-    grid-column: 1 / span 2;
+    grid-column: 1 / span 2
 }
-.paging a {
+
+div.sidebar-row aside .paging a {
     flex: 1;
-    color: #000;
-    text-decoration: none;
+    color: var(--txt-pagination);
+    text-decoration: none
 }
-.paging a.next {
-    text-align: right;
+
+div.sidebar-row aside .paging a.next {
+    text-align: right
 }
-.paging a.disabled {
-    opacity: 0.5;
+
+div.sidebar-row aside .paging a.disabled {
+    opacity: 0.5
+}
+
+div.sidebar-row main {
+    width: 100%;
+    max-width: 100%;
+    overflow: scroll
+}
+
+div.sidebar-row main h1 {
+    line-height: 2.5rem
 }

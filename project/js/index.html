@@ -1,136 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Web Memory</title>
+	<title>JavaScript | Web Memory</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-	
-		<link rel="stylesheet" href="https://ttmorley-su.github.io/ist263/project/main.css">
-	
-	
-	
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap"
+		rel="stylesheet">
+
+	<link rel="stylesheet" href="https://ttmorley-su.github.io/ist263/project/main.css">
+
+
+
 </head>
+
 <body>
 	<div class="content">
 		<nav>
-			<a class="title" href=https://ttmorley-su.github.io/ist263/project/>Web Memory</a>
+			<a class="title" href=https://ttmorley-su.github.io/ist263/project />Web Memory</a>
 		</nav>
-		
-<div class="sidebar-row">
-	<aside>
-		<h3>Table of Contents</h3>
-		<div class="paging">
-			
-				<a class="previous" href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;wasm&#x2F;><- Previous</a>
-			
-			
-				<a class="next disabled">Next -></a>
-			
-		</div>
-		
-		    <ul>
-			    
-		            
-	                    
-	                        <li>
-	                            <a href="https://ttmorley-su.github.io/ist263/project/js/#garbage-collection">Garbage Collection</a>
-	                        </li>
-				            
-					            <ul>
-				                    
-				                        <li>
-				                            <a href="https://ttmorley-su.github.io/ist263/project/js/#references-in-javascript">References in JavaScript</a>
-				                        </li>
-				                    
-					            </ul>
-				            
-	                    
-	                        <li>
-	                            <a href="https://ttmorley-su.github.io/ist263/project/js/#viewing-memory-usage-in-browsers">Viewing Memory Usage in Browsers</a>
-	                        </li>
-				            
-					            <ul>
-				                    
-				                        <li>
-				                            <a href="https://ttmorley-su.github.io/ist263/project/js/#firefox">Firefox</a>
-				                        </li>
-				                    
-				                        <li>
-				                            <a href="https://ttmorley-su.github.io/ist263/project/js/#chrome-chromium">Chrome&#x2F;Chromium</a>
-				                        </li>
-				                    
-				                        <li>
-				                            <a href="https://ttmorley-su.github.io/ist263/project/js/#safari-webkit">Safari&#x2F;WebKit</a>
-				                        </li>
-				                    
-					            </ul>
-				            
-	                    
-	                        <li>
-	                            <a href="https://ttmorley-su.github.io/ist263/project/js/#tips">Tips</a>
-	                        </li>
-				            
-	                    
-		            
-			    
-		    </ul>
-		
-	</aside>
-	<main>
-		<h1 id="javascript">JavaScript</h1>
-<p>This is probably the easiest memory management of all — you don’t need to do anything. You make allocations without even necessarily realizing it and free them without knowing. Garbage collection is a love-hate relationship. It takes a lot less mental work to write code, but it also makes it harder to use memory optimally. JavaScript has a few features that lets you make memory management easier.</p>
-<h2 id="garbage-collection">Garbage Collection</h2>
-<p>Garbage collection is typically done by counting the number of strong references there are to a chunk of memory. Once there’s 0 strong references to that memory, it can be freed at the garbage collector’s convenience. So, good code should make proper use of references to make the garbage collector’s job easier. There are two kinds of references: strong and weak. Weak references let you reference a part of memory with the expectation that the data might not exist anymore; you have to check that the data is available to use it. Strong references will always point to a valid part of memory and will make the garbage collector hold off freeing that memory until the strong references that point to it are gone. </p>
-<h3 id="references-in-javascript">References in JavaScript</h3>
-<p>So what does this look like in JavaScript? Well, almost everything uses a strong reference. There are only three exceptions to this, however. 
-Namely: </p>
-<ul>
-<li><code>WeakMap</code></li>
-<li><code>WeakSet</code></li>
-<li><code>WeakRef</code> </li>
-</ul>
-<p><code>WeakRef</code> — the newest of the three — is a very basic version of this concept. It simply holds a weak reference to memory and lets you get the value by using <code>WeakRef#deref()</code>. </p>
-<p><code>WeakMap</code> is probably the most useful, as it lets you tie data to a weak reference. For example, you can tie certain data to a HTML element, and when that element gets freed, so will that other data. </p>
-<p>Finally, there’s <code>WeakSet</code>. There’s not really a “useful example” that can be given for <code>WeakSet</code>. It’s basically an array of weak references, but you can’t iterate over it. You can only see if a weak reference is in there. </p>
-<p>Anyways, that’s basically all there is to references. Anything that’s a not a primitive (aka a string, boolean, number, undefined, or null) is moved around by reference. If you were curious why doing { a: 1 } == { a: 1 } gives you false, despite them looking the same, it’s because they’re comparing the reference, not the actual object keys and values.</p>
-<h2 id="viewing-memory-usage-in-browsers">Viewing Memory Usage in Browsers</h2>
-<p>Viewing how much memory your site uses is imperitive to making a good website. You should try to keep your site as basic as possible in <em>all</em> areas:</p>
-<ul>
-<li>HTML/DOM: try to limit the number of elements in the document.</li>
-<li>CSS: try to keep your styles simple, don't overcomplicate things!</li>
-<li>JavaScript: try to optimize your code to use both weak references and to do as little allocating as possible.</li>
-</ul>
-<p>Do note that the number of bytes shown by browsers in their memory view is not necessarily telling of all the things the browser does for your site. WebKit-based browsers try to be as transparent about this as possible, while the others are more JavaScript-oriented.</p>
-<h3 id="firefox">Firefox</h3>
-<p><img src="../firefox_mem.png" alt="Firefox memory view" />
-Simply open Dev Tools and go to the Memory tab. Create a snapshot and you can view the allocations at that moment.</p>
-<h3 id="chrome-chromium">Chrome/Chromium</h3>
-<p><img src="../chromium_mem.png" alt="Vivaldi memory view" />
-Simply open DevTools and go to the Memory tab. Create a snapshot and you can view the allocations at that moment.</p>
-<h3 id="safari-webkit">Safari/WebKit</h3>
-<p><img src="../webkit_mem.png" alt="Safari memory view" />
-WebKit's memory view is hidden by default, under the Timeline view. In the Timeline view, edit the items in the sidebar and check Memory. Then do a recording and select a memory snapshot to view the allocations.</p>
-<h2 id="tips">Tips</h2>
-<p>Some general tips for good memory management:</p>
-<ul>
-<li>If you only need an event to fire once, then do <code>addEventListener('event', handler, { once: true })</code>. This will let the garbage collector clean it up much faster.</li>
-<li>When you no longer need an event listener, be sure to call <code>removeEventListener('event', handler)</code>. Do note that the handler must point to the same exact reference as what you used for <code>addEventListener</code>.</li>
-<li>Try to use weak references (via <code>WeakMap</code>, <code>WeakSet</code>, or <code>WeakRef</code>) whenever is reasonably possible — this will let the garbage collector clean things up quicker.</li>
-<li>If you’re making an ArrayBuffer multiple times for the same purpose — ask yourself if you can’t just mutate one ArrayBuffer and save however many bytes of allocation.</li>
-<li>If you’re working with Workers and you’re passing ArrayBuffers around, see if you can transfer the data instead — or, even better, see if you can use a SharedArrayBuffer.</li>
-<li>Each of the functional loops (.map, .filter, .reduce, and so on) will clone the original array. Are you just using them for style or do you actually need the clone?</li>
-<li>And the one thing most JavaScript developers don’t want to hear: are you sure you really need a framework like React for that project? If you do, try a virtual DOM-less alternative, like Solid, Svelte, or Lit.</li>
-</ul>
 
-	</main>
-</div>
+		<div class="sidebar-row">
+			<aside>
+				<h3>Table of Contents</h3>
+				<div class="paging">
+
+					<a class="previous"
+						href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;wasm&#x2F;>&lt;-
+						Previous</a>
+
+
+					<a class="next disabled">Next -&gt;</a>
+
+				</div>
+
+				<div class="toc">
+
+
+
+					<a href="https://ttmorley-su.github.io/ist263/project/js/#garbage-collection">Garbage Collection</a>
+
+					<div class="toc">
+
+						<a href="https://ttmorley-su.github.io/ist263/project/js/#references-in-javascript">References
+							in JavaScript</a>
+
+					</div>
+
+
+					<a href="https://ttmorley-su.github.io/ist263/project/js/#viewing-memory-usage-in-browsers">Viewing
+						Memory Usage in Browsers</a>
+
+					<div class="toc">
+
+						<a href="https://ttmorley-su.github.io/ist263/project/js/#firefox">Firefox</a>
+
+						<a
+							href="https://ttmorley-su.github.io/ist263/project/js/#chrome-chromium">Chrome&#x2F;Chromium</a>
+
+						<a href="https://ttmorley-su.github.io/ist263/project/js/#safari-webkit">Safari&#x2F;WebKit</a>
+
+					</div>
+
+
+					<a href="https://ttmorley-su.github.io/ist263/project/js/#tips">Tips</a>
+
+
+
+
+				</div>
+
+			</aside>
+			<main>
+				<h1 id="javascript">JavaScript</h1>
+				<p>This is probably the easiest memory management of all — you don’t need to do anything. You make
+					allocations without even necessarily realizing it and free them without knowing. Garbage collection
+					is a love-hate relationship. It takes a lot less mental work to write code, but it also makes it
+					harder to use memory optimally. JavaScript has a few features that lets you make memory management
+					easier.</p>
+				<h2 id="garbage-collection">Garbage Collection</h2>
+				<p>Garbage collection is typically done by counting the number of strong references there are to a chunk
+					of memory. Once there’s 0 strong references to that memory, it can be freed at the garbage
+					collector’s convenience. So, good code should make proper use of references to make the garbage
+					collector’s job easier. There are two kinds of references: strong and weak. Weak references let you
+					reference a part of memory with the expectation that the data might not exist anymore; you have to
+					check that the data is available to use it. Strong references will always point to a valid part of
+					memory and will make the garbage collector hold off freeing that memory until the strong references
+					that point to it are gone. </p>
+				<h3 id="references-in-javascript">References in JavaScript</h3>
+				<p>So what does this look like in JavaScript? Well, almost everything uses a strong reference. There are
+					only three exceptions to this, however.
+					Namely: </p>
+				<ul>
+					<li><code>WeakMap</code></li>
+					<li><code>WeakSet</code></li>
+					<li><code>WeakRef</code> </li>
+				</ul>
+				<p><code>WeakRef</code> — the newest of the three — is a very basic version of this concept. It simply
+					holds a weak reference to memory and lets you get the value by using <code>WeakRef#deref()</code>.
+				</p>
+				<p><code>WeakMap</code> is probably the most useful, as it lets you tie data to a weak reference. For
+					example, you can tie certain data to a HTML element, and when that element gets freed, so will that
+					other data. </p>
+				<p>Finally, there’s <code>WeakSet</code>. There’s not really a “useful example” that can be given for
+					<code>WeakSet</code>. It’s basically an array of weak references, but you can’t iterate over it. You
+					can only see if a weak reference is in there. </p>
+				<p>Anyways, that’s basically all there is to references. Anything that’s a not a primitive (aka a
+					string, boolean, number, undefined, or null) is moved around by reference. If you were curious why
+					doing { a: 1 } == { a: 1 } gives you false, despite them looking the same, it’s because they’re
+					comparing the reference, not the actual object keys and values.</p>
+				<h2 id="viewing-memory-usage-in-browsers">Viewing Memory Usage in Browsers</h2>
+				<p>Viewing how much memory your site uses is imperitive to making a good website. You should try to keep
+					your site as basic as possible in <em>all</em> areas:</p>
+				<ul>
+					<li>HTML/DOM: try to limit the number of elements in the document.</li>
+					<li>CSS: try to keep your styles simple, don't overcomplicate things!</li>
+					<li>JavaScript: try to optimize your code to use both weak references and to do as little allocating
+						as possible.</li>
+				</ul>
+				<p>Do note that the number of bytes shown by browsers in their memory view is not necessarily telling of
+					all the things the browser does for your site. WebKit-based browsers try to be as transparent about
+					this as possible, while the others are more JavaScript-oriented.</p>
+				<h3 id="firefox">Firefox</h3>
+				<p><img src="../firefox_mem.png" alt="Firefox memory view" />
+					Simply open Dev Tools and go to the Memory tab. Create a snapshot and you can view the allocations
+					at that moment.</p>
+				<h3 id="chrome-chromium">Chrome/Chromium</h3>
+				<p><img src="../chromium_mem.png" alt="Vivaldi memory view" />
+					Simply open DevTools and go to the Memory tab. Create a snapshot and you can view the allocations at
+					that moment.</p>
+				<h3 id="safari-webkit">Safari/WebKit</h3>
+				<p><img src="../webkit_mem.png" alt="Safari memory view" />
+					WebKit's memory view is hidden by default, under the Timeline view. In the Timeline view, edit the
+					items in the sidebar and check Memory. Then do a recording and select a memory snapshot to view the
+					allocations.</p>
+				<h2 id="tips">Tips</h2>
+				<p>Some general tips for good memory management:</p>
+				<ul>
+					<li>If you only need an event to fire once, then do
+						<code>addEventListener('event', handler, { once: true })</code>. This will let the garbage
+						collector clean it up much faster.</li>
+					<li>When you no longer need an event listener, be sure to call
+						<code>removeEventListener('event', handler)</code>. Do note that the handler must point to the
+						same exact reference as what you used for <code>addEventListener</code>.</li>
+					<li>Try to use weak references (via <code>WeakMap</code>, <code>WeakSet</code>, or
+						<code>WeakRef</code>) whenever is reasonably possible — this will let the garbage collector
+						clean things up quicker.</li>
+					<li>If you’re making an ArrayBuffer multiple times for the same purpose — ask yourself if you can’t
+						just mutate one ArrayBuffer and save however many bytes of allocation.</li>
+					<li>If you’re working with Workers and you’re passing ArrayBuffers around, see if you can transfer
+						the data instead — or, even better, see if you can use a SharedArrayBuffer.</li>
+					<li>Each of the functional loops (.map, .filter, .reduce, and so on) will clone the original array.
+						Are you just using them for style or do you actually need the clone?</li>
+					<li>And the one thing most JavaScript developers don’t want to hear: are you sure you really need a
+						framework like React for that project? If you do, try a virtual DOM-less alternative, like
+						Solid, Svelte, or Lit.</li>
+				</ul>
+
+			</main>
+		</div>
 
 		<footer>
 			&copy; 2022
 		</footer>
 	</div>
 </body>
+
 </html>

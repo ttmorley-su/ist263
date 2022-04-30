@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Web Memory</title>
+	<title>Memory | Web Memory</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
@@ -24,30 +24,26 @@
 		<h3>Table of Contents</h3>
 		<div class="paging">
 			
-				<a class="previous disabled"><- Previous</a>
+				<a class="previous disabled">&lt;- Previous</a>
 			
 			
-				<a class="next" href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;wasm&#x2F;>Next -></a>
+				<a class="next" href=https:&#x2F;&#x2F;ttmorley-su.github.io&#x2F;ist263&#x2F;project&#x2F;wasm&#x2F;>Next -&gt;</a>
 			
 		</div>
 		
-		    <ul>
-			    
-		            
-	                    
-	                        <li>
-	                            <a href="https://ttmorley-su.github.io/ist263/project/memory/#what-is-memory">What is Memory</a>
-	                        </li>
-				            
-	                    
-	                        <li>
-	                            <a href="https://ttmorley-su.github.io/ist263/project/memory/#allocations">Allocations</a>
-	                        </li>
-				            
-	                    
-		            
-			    
-		    </ul>
+	    <div class="toc">
+		    
+            
+              
+                <a href="https://ttmorley-su.github.io/ist263/project/memory/#what-is-memory">What is Memory</a>
+	            
+            
+                <a href="https://ttmorley-su.github.io/ist263/project/memory/#allocations">Allocations</a>
+	            
+            
+          
+		    
+	    </div>
 		
 	</aside>
 	<main>
@@ -57,19 +53,19 @@
 <h2 id="allocations">Allocations</h2>
 <p>You shouldn’t just go writing bytes just anywhere in this array. Instead, you’ll need an allocator to tell you where you can write to. An allocator’s whole intention is to keep track of what areas of memory are available for use. The standard approach to this is allocating and deallocating memory. In C, this is done through the <code>malloc</code> (short for memory allocate) and <code>free</code> functions respectively. <code>malloc</code> takes the number of bytes you want as an argument and returns the index in memory you can write to. This index is commonly referred to as a pointer.</p>
 <p>For example, here’s a basic C program that creates a string that is 3 bytes, prints it, and then frees it:</p>
-<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">stdlib.h</span><span>&gt;
-</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">stdio.h</span><span>&gt;
+<pre data-lang="c" style="background-color:#182124;color:#eeffff;" class="language-c "><code class="language-c" data-lang="c"><span style="font-style:italic;color:#c792ea;">#include </span><span style="color:#89ddff;">&lt;</span><span style="color:#c3e88d;">stdlib.h</span><span style="color:#89ddff;">&gt;
+</span><span style="font-style:italic;color:#c792ea;">#include </span><span style="color:#89ddff;">&lt;</span><span style="color:#c3e88d;">stdio.h</span><span style="color:#89ddff;">&gt;
 </span><span>
-</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span>(</span><span style="color:#b48ead;">void</span><span>) {
-</span><span>  </span><span style="color:#65737e;">// C strings end with null, so we need 3 bytes instead of just 2
-</span><span>  </span><span style="color:#b48ead;">char </span><span>*string = </span><span style="color:#96b5b4;">malloc</span><span>(</span><span style="color:#d08770;">3</span><span>); </span><span style="color:#65737e;">// get a pointer to 3 bytes in memory
-</span><span>  string[</span><span style="color:#d08770;">0</span><span>] = &#39;</span><span style="color:#a3be8c;">H</span><span>&#39;;
-</span><span>  string[</span><span style="color:#d08770;">1</span><span>] = &#39;</span><span style="color:#a3be8c;">i</span><span>&#39;;
-</span><span>  string[</span><span style="color:#d08770;">2</span><span>] = &#39;</span><span style="color:#96b5b4;">\0</span><span>&#39;; </span><span style="color:#65737e;">// add the null char to make this a valid C string
-</span><span>  </span><span style="color:#96b5b4;">puts</span><span>(string); </span><span style="color:#65737e;">// this logs the string into the console
-</span><span>  </span><span style="color:#96b5b4;">free</span><span>(string); </span><span style="color:#65737e;">// we no longer need the string, so free up its memory
-</span><span>  </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span>;
-</span><span>}
+</span><span style="font-style:italic;color:#c792ea;">int </span><span style="color:#82aaff;">main</span><span style="color:#89ddff;">(</span><span style="font-style:italic;color:#c792ea;">void</span><span style="color:#89ddff;">) {
+</span><span>  </span><span style="font-style:italic;color:#c3cfd5;">// C strings end with null, so we need 3 bytes instead of just 2
+</span><span>  </span><span style="font-style:italic;color:#c792ea;">char </span><span style="color:#89ddff;">*</span><span>string </span><span style="color:#89ddff;">= </span><span style="color:#82aaff;">malloc</span><span style="color:#89ddff;">(</span><span style="color:#f78c6c;">3</span><span style="color:#89ddff;">); </span><span style="font-style:italic;color:#c3cfd5;">// get a pointer to 3 bytes in memory
+</span><span>  string</span><span style="color:#89ddff;">[</span><span style="color:#f78c6c;">0</span><span style="color:#89ddff;">] = &#39;</span><span style="color:#c3e88d;">H</span><span style="color:#89ddff;">&#39;;
+</span><span>  string</span><span style="color:#89ddff;">[</span><span style="color:#f78c6c;">1</span><span style="color:#89ddff;">] = &#39;</span><span style="color:#c3e88d;">i</span><span style="color:#89ddff;">&#39;;
+</span><span>  string</span><span style="color:#89ddff;">[</span><span style="color:#f78c6c;">2</span><span style="color:#89ddff;">] = &#39;\0&#39;; </span><span style="font-style:italic;color:#c3cfd5;">// add the null char to make this a valid C string
+</span><span>  </span><span style="color:#82aaff;">puts</span><span style="color:#89ddff;">(</span><span style="color:#82aaff;">string</span><span style="color:#89ddff;">); </span><span style="font-style:italic;color:#c3cfd5;">// this logs the string into the console
+</span><span>  </span><span style="color:#82aaff;">free</span><span style="color:#89ddff;">(</span><span style="color:#82aaff;">string</span><span style="color:#89ddff;">); </span><span style="font-style:italic;color:#c3cfd5;">// we no longer need the string, so free up its memory
+</span><span>  </span><span style="font-style:italic;color:#c792ea;">return </span><span style="color:#f78c6c;">0</span><span style="color:#89ddff;">;
+</span><span style="color:#89ddff;">}
 </span></code></pre>
 <p>This program perfectly manages the memory it uses, it allocates only what it needs and frees it up when its no longer needed. Some people may be afraid of having this level of control, but it offers lots of potential optimizations. So, how does this impact the web? Why should you know this? Well, being able to understand the impacts of each function you use is a very important thing if you want to write good websites. While you can’t access the allocator directly from JavaScript, the browser can. It’ll manage everything for you — via the process of garbage collection. Which is basically a fancy term for “any memory that is absolutely unused will get freed”. If you can learn to work with the garbage collector, then you’ll be good at memory management in JavaScript. If you decide to write code for WebAssembly instead, you’ll have complete access to some memory. </p>
 
